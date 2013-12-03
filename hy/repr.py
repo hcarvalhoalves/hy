@@ -39,6 +39,7 @@ hy_map = {
     str_type: lambda x: x.startswith(keyword_magic) and HyKeyword(x.strip(keyword_magic)) or HyString(x),
     dict: lambda x: HyDict(chain(*x.iteritems())),
     list: HyList,
+    tuple: HyList,
 }
 
 builtin_repr = builtins.repr
