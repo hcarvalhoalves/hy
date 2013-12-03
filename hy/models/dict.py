@@ -27,4 +27,5 @@ class HyDict(HyList):
     """
 
     def __repr__(self):
-        return "{%s}" % (" ".join([repr(x) for x in self]))
+        from hy.repr import hyrepr
+        return "{%s}" % (" ".join([hyrepr(x) for x in self]))

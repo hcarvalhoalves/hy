@@ -26,6 +26,7 @@ from hy.models.integer import HyInteger
 from hy.models.float import HyFloat
 from hy.models.complex import HyComplex
 from hy.models.dict import HyDict
+from hy.models.keyword import HyKeyword, keyword_magic
 from hy._compat import str_type
 
 from collections import defaultdict
@@ -82,9 +83,10 @@ _wrappers = {
     bool: lambda x: HySymbol("True") if x else HySymbol("False"),
     float: HyFloat,
     complex: HyComplex,
-    str_type: HyString,
+    str_type: lambda x: x.startswith(keyword_magic) and HyKeyword(x.strip(keyword_magic)) or HyString(x),
     dict: lambda d: HyDict(_wrap_value(x) for x in sum(d.items(), ())),
-    list: lambda l: HyList(_wrap_value(x) for x in l)
+    list: lambda l: HyList(_wrap_value(x) for x in l),
+    tuple: lambda t: HyList(_wrap_value(x) for x in t),
 }
 
 

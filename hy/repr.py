@@ -18,39 +18,16 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
 
-from hy.models.complex import HyComplex
-from hy.models.dict import HyDict
-from hy.models.expression import HyExpression
-from hy.models.float import HyFloat
-from hy.models.integer import HyInteger
-from hy.models.keyword import HyKeyword, keyword_magic
-from hy.models.lambdalist import HyLambdaListKeyword
-from hy.models.list import HyList
-from hy.models.string import HyString
-from hy.models.symbol import HySymbol
+from hy.macros import _wrappers
+from hy._compat import builtins
 
-from hy._compat import builtins, str_type
+__all__ = ["hyrepr"]
 
-from itertools import chain
-
-__all__ = ["HyRepr", "repr"]
-
-hy_map = {
-    str_type: lambda x: x.startswith(keyword_magic) and HyKeyword(x.strip(keyword_magic)) or HyString(x),
-    dict: lambda x: HyDict(chain(*x.iteritems())),
-    list: HyList,
-    tuple: HyList,
-}
-
-builtin_repr = builtins.repr
-
-def repr(x):
+def hyrepr(x):
     try:
-        hy_model = hy_map[type(x)]
+        hymodel = _wrappers[type(x)]
     except KeyError:
-        s = builtin_repr(x)
+        s = builtins.repr(x)
     else:
-        s = hy_model(x).__repr__() # Wrap in HyModel
+        s = hyrepr(hymodel(x)) # Wrap in HyModel for a neat __repr__
     return s
-
-builtins.repr = repr
