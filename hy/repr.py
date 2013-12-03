@@ -1,4 +1,4 @@
-# Copyright (c) 2013 Paul Tagliamonte <paultag@debian.org>
+# Copyright (c) 2013 Nicolas Dandrimont <nicolas.dandrimont@crans.org>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -18,15 +18,38 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
 
-from hy.models import HyObject
-from hy._compat import str_type
+from hy.models.complex import HyComplex
+from hy.models.dict import HyDict
+from hy.models.expression import HyExpression
+from hy.models.float import HyFloat
+from hy.models.integer import HyInteger
+from hy.models.keyword import HyKeyword, keyword_magic
+from hy.models.lambdalist import HyLambdaListKeyword
+from hy.models.list import HyList
+from hy.models.string import HyString
+from hy.models.symbol import HySymbol
 
+from hy._compat import builtins, str_type
 
-class HyString(HyObject, str_type):
-    """
-    Generic Hy String object. Helpful to store string literals from Hy
-    scripts. It's either a ``str`` or a ``unicode``, depending on the
-    Python version.
-    """
-    def __repr__(self):
-        return '"%s"' % self
+from itertools import chain
+
+__all__ = ["HyRepr", "repr"]
+
+hy_map = {
+    str_type: lambda x: x.startswith(keyword_magic) and HyKeyword(x.strip(keyword_magic)) or HyString(x),
+    dict: lambda x: HyDict(chain(*x.iteritems())),
+    list: HyList,
+}
+
+builtin_repr = builtins.repr
+
+def repr(x):
+    try:
+        hy_model = hy_map[type(x)]
+    except KeyError:
+        s = builtin_repr(x)
+    else:
+        s = hy_model(x).__repr__() # Wrap in HyModel
+    return s
+
+builtins.repr = repr

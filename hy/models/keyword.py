@@ -22,6 +22,7 @@ from __future__ import unicode_literals
 from hy.models import HyObject
 from hy._compat import str_type
 
+keyword_magic = str_type("\uFDD0")
 
 class HyKeyword(HyObject, str_type):
     """Generic Hy Keyword object. It's either a ``str`` or a ``unicode``,
@@ -29,5 +30,8 @@ class HyKeyword(HyObject, str_type):
     """
 
     def __new__(cls, value):
-        obj = str_type.__new__(cls, "\uFDD0" + value)
+        obj = str_type.__new__(cls, keyword_magic + value)
         return obj
+
+    def __repr__(self):
+        return '%s' % str_type(self).replace(keyword_magic, '')

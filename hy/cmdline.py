@@ -35,6 +35,7 @@ from hy.lex import LexException, PrematureEndOfInput, tokenize
 from hy.compiler import hy_compile
 from hy.importer import ast_compile, import_buffer_to_module
 from hy.completer import completion
+from hy.repr import repr
 
 from hy.macros import macro, require
 from hy.models.expression import HyExpression
@@ -70,6 +71,13 @@ def print_python_code(_ast):
     _ast_for_print = ast.Module()
     _ast_for_print.body = _ast.body
     print(astor.codegen.to_source(_ast_for_print))
+
+
+def print_hy_repr(obj):
+  sys.stdout.write(repr(obj))
+  sys.stdout.write('\n')
+
+sys.displayhook = print_hy_repr
 
 
 class HyREPL(code.InteractiveConsole):

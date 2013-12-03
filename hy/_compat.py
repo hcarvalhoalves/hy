@@ -23,6 +23,7 @@ try:
     import __builtin__ as builtins
 except ImportError:
     import builtins  # NOQA
+
 import sys
 
 PY3 = sys.version_info[0] >= 3
@@ -36,3 +37,4 @@ if PY3:
     long_type = int
 else:
     long_type = long  # NOQA
+
