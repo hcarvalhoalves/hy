@@ -18,16 +18,14 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
 
-from hy.macros import _wrappers
+from hy.macros import _wrap_value
 from hy._compat import builtins
 
 __all__ = ["hyrepr"]
 
 def hyrepr(x):
-    try:
-        hymodel = _wrappers[type(x)]
-    except KeyError:
-        s = builtins.repr(x)
+    if hasattr(x, '__hyrepr__'):
+        r = x.__hyrepr__()
     else:
-        s = hyrepr(hymodel(x)) # Wrap in HyModel for a neat __repr__
-    return s
+        r = builtins.repr(_wrap_value(x))
+    return r

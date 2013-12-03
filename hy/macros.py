@@ -83,10 +83,11 @@ _wrappers = {
     bool: lambda x: HySymbol("True") if x else HySymbol("False"),
     float: HyFloat,
     complex: HyComplex,
-    str_type: lambda x: x.startswith(keyword_magic) and HyKeyword(x.strip(keyword_magic)) or HyString(x),
     dict: lambda d: HyDict(_wrap_value(x) for x in sum(d.items(), ())),
     list: lambda l: HyList(_wrap_value(x) for x in l),
     tuple: lambda t: HyList(_wrap_value(x) for x in t),
+    # The following is terrible and introduces bugs, but couldn't find a better way
+    str_type: lambda x: x.startswith(keyword_magic) and HyKeyword(x.strip(keyword_magic)) or HyString(x),
 }
 
 
