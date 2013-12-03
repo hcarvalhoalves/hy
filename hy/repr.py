@@ -27,5 +27,5 @@ def hyrepr(x):
     if hasattr(x, '__hyrepr__'):
         r = x.__hyrepr__()
     else:
-        r = builtins.repr(_wrap_value(x))
+        r = _wrap_value(x).__repr__()
     return r
